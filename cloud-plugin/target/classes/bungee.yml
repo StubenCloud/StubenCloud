@@ -1,0 +1,4 @@
+name: CloudPlugin
+version: 1.0.0
+author: Haizoooon
+main: eu.pixelstube.cloud.bootstrap.bungeecord.BungeeBootstrap

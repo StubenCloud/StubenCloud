@@ -1,0 +1,6 @@
+eu\pixelstube\cloud\configuration\TablistConfiguration.class
+eu\pixelstube\cloud\configuration\MotdConfiguration.class
+eu\pixelstube\cloud\proxy\bungee\BungeeBootstrap.class
+eu\pixelstube\cloud\proxy\bungee\listener\ProxyPingListener.class
+eu\pixelstube\cloud\configuration\MessageConfiguration.class
+eu\pixelstube\cloud\connection\ConnectionListener.class

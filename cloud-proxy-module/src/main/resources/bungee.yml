@@ -1,0 +1,6 @@
+name: StubenCloud-ProxyModule
+main: eu.pixelstube.cloud.proxy.bungee.BungeeBootstrap
+version: 1.0.0
+author: Haizoooon
+depends:
+  - CloudPlugin
