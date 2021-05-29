@@ -11,7 +11,7 @@ public interface ICloudLogger {
 
     void severe(String message);
 
-    void warn(String message);
+    void warning(String message);
 
     void success(String message);
 

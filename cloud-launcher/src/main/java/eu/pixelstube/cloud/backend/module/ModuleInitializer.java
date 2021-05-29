@@ -14,7 +14,7 @@ package eu.pixelstube.cloud.backend.module;
  */
 
 import eu.pixelstube.cloud.CloudLauncher;
-import eu.pixelstube.cloud.logger.CloudLogger;
+import eu.pixelstube.cloud.logger.ICloudLogger;
 import eu.pixelstube.cloud.module.Module;
 
 import java.lang.reflect.InvocationTargetException;
@@ -59,7 +59,7 @@ public class ModuleInitializer {
 
             }
 
-            Method method = clazz.getMethod("onInitialization", CloudLogger.class);
+            Method method = clazz.getMethod("onInitialization", ICloudLogger.class);
             method.invoke(instance, CloudLauncher.getInstance().getCloudLogger());
 
         } catch (MalformedURLException | IllegalAccessException | InstantiationException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException  e) {

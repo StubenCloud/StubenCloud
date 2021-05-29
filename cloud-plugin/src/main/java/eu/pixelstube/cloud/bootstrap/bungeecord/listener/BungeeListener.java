@@ -9,7 +9,6 @@ import eu.pixelstube.cloud.type.GroupType;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.event.ServerDisconnectEvent;
@@ -37,18 +36,6 @@ public class BungeeListener implements Listener {
             event.getPlayer().disconnect(new TextComponent("§cCloud service Lobby cannot be found!"));
         }
 
-    }
-
-    @EventHandler
-    public void handle(LoginEvent event){
-        if(CloudPlugin.getInstance().thisService().getCloudGroup().isMaintenance()){
-            String name = event.getConnection().getName();
-            if(name.equalsIgnoreCase("Haizoooon") || name.equalsIgnoreCase("HttxDeVii") || name.equalsIgnoreCase("YyTFlo")){
-                return;
-            }
-            event.setCancelled(true);
-            event.setCancelReason(new TextComponent("§7This network is currently in §cmaintenance§8!"));
-        }
     }
 
     @EventHandler

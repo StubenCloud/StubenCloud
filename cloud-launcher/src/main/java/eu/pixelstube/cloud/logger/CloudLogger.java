@@ -24,7 +24,7 @@ import java.util.logging.SimpleFormatter;
  * Date: 15.05.2021
  * Copyright© 2021 Max H.
  **/
-public class CloudLogger extends Logger {
+public class CloudLogger extends Logger implements ICloudLogger{
 
     private final CopyOnWriteArrayList<String> cachedMessages = new CopyOnWriteArrayList<>();
 

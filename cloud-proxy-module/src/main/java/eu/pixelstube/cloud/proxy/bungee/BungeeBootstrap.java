@@ -5,6 +5,7 @@ import eu.pixelstube.cloud.CloudPlugin;
 import eu.pixelstube.cloud.configuration.MessageConfiguration;
 import eu.pixelstube.cloud.configuration.MotdConfiguration;
 import eu.pixelstube.cloud.configuration.TablistConfiguration;
+import eu.pixelstube.cloud.configuration.WhitelistConfiguration;
 import eu.pixelstube.cloud.connection.ConnectionListener;
 import eu.pixelstube.cloud.group.ICloudGroup;
 import eu.pixelstube.cloud.proxy.bungee.listener.ProxyPingListener;
@@ -25,6 +26,7 @@ public class BungeeBootstrap extends Plugin {
     private TablistConfiguration tablistConfiguration;
     private MotdConfiguration motdConfiguration;
     private MessageConfiguration messageConfiguration;
+    private WhitelistConfiguration whitelistConfiguration;
 
     @Override
     public void onEnable() {
@@ -39,8 +41,8 @@ public class BungeeBootstrap extends Plugin {
     public void start(){
         getProxy().getScheduler().schedule(this, () -> {
 
-            String header = String.join(" \n ", getTablistConfiguration().getHeader());
-            String footer = String.join(" \n ", getTablistConfiguration().getFooter());
+            String header = String.join("\n", getTablistConfiguration().getHeader());
+            String footer = String.join("\n", getTablistConfiguration().getFooter());
 
             getProxy().getPlayers().forEach(proxiedPlayer -> proxiedPlayer.setTabHeader(new TextComponent(replace(proxiedPlayer, header)), new TextComponent(replace(proxiedPlayer, footer))));
 
@@ -79,6 +81,14 @@ public class BungeeBootstrap extends Plugin {
 
     public void setMotdConfiguration(MotdConfiguration motdConfiguration) {
         this.motdConfiguration = motdConfiguration;
+    }
+
+    public WhitelistConfiguration getWhitelistConfiguration() {
+        return whitelistConfiguration;
+    }
+
+    public void setWhitelistConfiguration(WhitelistConfiguration whitelistConfiguration) {
+        this.whitelistConfiguration = whitelistConfiguration;
     }
 
     public TablistConfiguration getTablistConfiguration() {

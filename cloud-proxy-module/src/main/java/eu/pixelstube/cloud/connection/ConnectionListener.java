@@ -6,6 +6,7 @@ import eu.pixelstube.cloud.CloudLauncher;
 import eu.pixelstube.cloud.configuration.MessageConfiguration;
 import eu.pixelstube.cloud.configuration.MotdConfiguration;
 import eu.pixelstube.cloud.configuration.TablistConfiguration;
+import eu.pixelstube.cloud.configuration.WhitelistConfiguration;
 import eu.pixelstube.cloud.jsonlib.JsonLib;
 import eu.pixelstube.cloud.proxy.bungee.BungeeBootstrap;
 import org.json.JSONObject;
@@ -57,6 +58,13 @@ public class ConnectionListener extends Listener {
                 List<Object> headerRaw = tablist.getJSONArray("header").toList();
                 List<Object> footerRaw = tablist.getJSONArray("footer").toList();
 
+                List<Object> whitelistRaw = value.getJSONArray("whitelist").toList();
+
+                List<String> whitelist = new ArrayList<>();
+                for (Object object : whitelistRaw) {
+                    whitelist.add(object.toString());
+                }
+
                 List<String> header = new ArrayList<>();
                 for (Object object : headerRaw) {
                     header.add(object.toString());
@@ -67,6 +75,8 @@ public class ConnectionListener extends Listener {
                 }
 
                 BungeeBootstrap.getInstance().setTablistConfiguration(new TablistConfiguration(header, footer));
+
+                BungeeBootstrap.getInstance().setWhitelistConfiguration(new WhitelistConfiguration(whitelist));
 
                 BungeeBootstrap.getInstance().start();
 

@@ -5,6 +5,7 @@ import eu.pixelstube.cloud.group.ICloudGroup;
 import eu.pixelstube.cloud.proxy.bungee.BungeeBootstrap;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -15,6 +16,22 @@ import net.md_5.bungee.event.EventHandler;
  * Copyright© 2021 Max H.
  **/
 public class ProxyPingListener implements Listener {
+
+    @EventHandler
+    public void handle(LoginEvent event){
+
+        if(CloudPlugin.getInstance().thisService().getCloudGroup().isMaintenance()){
+
+            if (BungeeBootstrap.getInstance().getWhitelistConfiguration().getWhitelistedPlayers().contains(event.getConnection().getName())) {
+                return;
+            }
+
+            event.setCancelled(true);
+            event.setCancelReason(new TextComponent("§7This service is currently in maintenance§8!"));
+
+        }
+
+    }
 
     @EventHandler
     public void handle(ProxyPingEvent event){

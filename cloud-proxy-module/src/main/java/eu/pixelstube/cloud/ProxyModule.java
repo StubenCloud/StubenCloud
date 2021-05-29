@@ -52,6 +52,12 @@ public class ProxyModule implements ICloudModule {
         jsonLib.append("tablistConfiguration", JsonLib.empty().append("header", JsonLib.fromObject(header)).append("footer", JsonLib.fromObject(footer)));
         jsonLib.append("motdConfiguration", JsonLib.empty().append("maintenance", JsonLib.fromObject(maintenance)).append("online", JsonLib.fromObject(online)));
 
+        List<String> whitelist = new ArrayList<>();
+        whitelist.add("YyTFlo");
+        whitelist.add("Haizoooon");
+        whitelist.add("HttxDeVii");
+        jsonLib.append("whitelist", JsonLib.fromObject(whitelist));
+
         if(!new File("modules/proxy-module", "config.json").exists()){
             jsonLib.saveAsFile("modules/proxy-module/config.json");
         }
