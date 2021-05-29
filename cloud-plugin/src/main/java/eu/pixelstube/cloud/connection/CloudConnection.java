@@ -6,9 +6,8 @@ import com.esotericsoftware.kryonet.Listener;
 import eu.pixelstube.cloud.CloudAPI;
 import eu.pixelstube.cloud.CloudPlugin;
 import eu.pixelstube.cloud.bootstrap.bungeecord.BungeeBootstrap;
-import eu.pixelstube.cloud.bootstrap.bungeecord.events.BungeeCloudServiceStartEvent;
-import eu.pixelstube.cloud.bootstrap.bungeecord.events.BungeeCloudServiceStopEvent;
-import eu.pixelstube.cloud.bootstrap.bungeecord.events.BungeeCloudServiceUpdateEvent;
+import eu.pixelstube.cloud.event.events.CloudServiceStartEvent;
+import eu.pixelstube.cloud.event.events.CloudServiceUpdateEvent;
 import eu.pixelstube.cloud.group.ICloudGroup;
 import eu.pixelstube.cloud.jsonlib.JsonLib;
 import eu.pixelstube.cloud.player.ICloudPlayer;
@@ -165,32 +164,126 @@ public class CloudConnection {
                         CloudAPI.getInstance().getCloudServiceManager().getCloudServices().remove(CloudAPI.getInstance().getCloudServiceManager().getCloudServices().stream().filter(cloudService1 -> cloudService1.getName().equalsIgnoreCase(name)).findAny().orElse(null));
                         CloudAPI.getInstance().getCloudServiceManager().getCloudServices().add(cloudService);
 
-                        System.out.println(cloudService.getCloudGroup().getGroupType().name());
-                        System.out.println(cloudService.getCloudGroup().getGroupVersion().name());
-
-                        if (CloudPlugin.getInstance().thisService().getVersion().equals(GroupVersion.WATERFALL) || CloudPlugin.getInstance().thisService().getVersion().equals(GroupVersion.BUNGEECORD)) {
-
-                            BungeeBootstrap.getInstance().getProxy().getPluginManager().callEvent(new BungeeCloudServiceUpdateEvent(cloudService));
-
-                        }
+                        CloudPlugin.getInstance().getEventBus().post(new CloudServiceUpdateEvent(cloudService));
 
                     } else if (jsonObject.getString("type").equalsIgnoreCase("service_registered")) {
 
-                        ICloudService cloudService = CloudAPI.getInstance().getCloudServiceManager().getCachedCloudService(jsonObject.getString("serviceName"));
+                        String groupName = jsonObject.getString("groupName");
+                        int serviceId = jsonObject.getInt("serviceId");
+                        UUID uuid = UUID.fromString(jsonObject.getString("uuid"));
+                        String name = jsonObject.getString("name");
+                        String serviceIdName = name + "-" + serviceId;
+                        CloudServiceStatus cloudServiceStatus = Arrays.stream(CloudServiceStatus.values()).filter(cloudServiceStatus1 -> cloudServiceStatus1.name().equalsIgnoreCase(jsonObject.getString("cloudStatus"))).findAny().orElse(null);
+                        int port = jsonObject.getInt("port");
+                        boolean staticService = jsonObject.getBoolean("static");
+                        GroupVersion groupVersion = Arrays.stream(GroupVersion.values()).filter(groupVersion1 -> groupVersion1.getDisplay().equalsIgnoreCase(jsonObject.getString("groupVersion"))).findAny().orElse(null);
 
-                        System.out.println(cloudService.getCloudGroup().getGroupType().name());
-                        System.out.println(cloudService.getCloudGroup().getGroupVersion().name());
+                        ICloudService cloudService = new ICloudService() {
+                            @Override
+                            public String getGroupName() {
+                                return groupName;
+                            }
+
+                            @Override
+                            public int getServiceId() {
+                                return serviceId;
+                            }
+
+                            @Override
+                            public UUID getUniqueId() {
+                                return uuid;
+                            }
+
+                            @Override
+                            public String getName() {
+                                return name;
+                            }
+
+                            @Override
+                            public String getServiceIdName() {
+                                return serviceIdName;
+                            }
+
+                            @Override
+                            public List<ICloudPlayer> getCurrentPlayers() {
+                                return new ArrayList<>();
+                            }
+
+                            @Override
+                            public ICloudGroup getCloudGroup() {
+                                return CloudAPI.getInstance().getCloudGroupManager().getCloudGroups().stream().filter(iCloudGroup -> iCloudGroup.getName().equalsIgnoreCase(groupName)).findAny().orElse(null);
+                            }
+
+                            @Override
+                            public CloudServiceStatus getServiceStatus() {
+                                return cloudServiceStatus;
+                            }
+
+                            @Override
+                            public ICloudServiceExecutor getServiceExecutor() {
+                                return null;
+                            }
+
+                            @Override
+                            public CopyOnWriteArrayList<String> getConsoleMessages() {
+                                return new CopyOnWriteArrayList<>();
+                            }
+
+                            @Override
+                            public GroupVersion getVersion() {
+                                return groupVersion;
+                            }
+
+                            @Override
+                            public int getPort() {
+                                return port;
+                            }
+
+                            @Override
+                            public void setStatus(CloudServiceStatus cloudServiceStatus) {
+
+                            }
+
+                            @Override
+                            public boolean isStatic() {
+                                return staticService;
+                            }
+
+                            @Override
+                            public void start() {
+
+                            }
+
+                            @Override
+                            public void update() {
+                                JsonLib jsonLib = JsonLib.empty();
+
+                                jsonLib.append("type", "service_update");
+                                jsonLib.append("groupName", getGroupName());
+                                jsonLib.append("serviceId", getServiceId());
+                                jsonLib.append("uuid", getUniqueId().toString());
+                                jsonLib.append("name", getName());
+                                jsonLib.append("port", getPort());
+                                jsonLib.append("cloudStatus", getServiceStatus().name());
+                                jsonLib.append("static", isStatic());
+                                jsonLib.append("groupVersion", getVersion().getDisplay());
+
+                                connection.sendTCP(jsonLib.getAsJsonString());
+                            }
+                        };
+
+                        CloudAPI.getInstance().getCloudServiceManager().getCloudServices().add(cloudService);
 
                         if (cloudService.getCloudGroup().getGroupType().equals(GroupType.SERVER) || cloudService.getCloudGroup().getGroupType().equals(GroupType.LOBBY)) {
                             if (CloudPlugin.getInstance().thisService().getVersion().equals(GroupVersion.WATERFALL) || CloudPlugin.getInstance().thisService().getVersion().equals(GroupVersion.BUNGEECORD)) {
 
                                 BungeeBootstrap.getInstance().registerService(cloudService.getServiceIdName(), new InetSocketAddress("127.0.0.1", cloudService.getPort()));
 
-                                BungeeBootstrap.getInstance().getProxy().getPluginManager().callEvent(new BungeeCloudServiceStartEvent(cloudService));
-
                             }
 
                         }
+
+                        CloudPlugin.getInstance().getEventBus().post(new CloudServiceStartEvent(cloudService));
 
                     } else if (jsonObject.getString("type").equalsIgnoreCase("group_registered")) {
 
@@ -273,7 +366,7 @@ public class CloudConnection {
                         System.out.println(cloudService.getCloudGroup().getGroupType().name());
                         System.out.println(cloudService.getCloudGroup().getGroupVersion().name());
 
-                        BungeeBootstrap.getInstance().getProxy().getPluginManager().callEvent(new BungeeCloudServiceStopEvent(cloudService));
+                        CloudPlugin.getInstance().getEventBus().post(new CloudServiceUpdateEvent(cloudService));
 
                     }
 

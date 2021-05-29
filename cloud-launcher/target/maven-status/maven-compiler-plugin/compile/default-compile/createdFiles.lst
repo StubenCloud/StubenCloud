@@ -28,6 +28,7 @@ eu\pixelstube\cloud\connection\CloudConnectionServer.class
 eu\pixelstube\cloud\setups\GroupSetup.class
 eu\pixelstube\cloud\setups\GroupSetup$2.class
 eu\pixelstube\cloud\setups\GroupSetup$9.class
+eu\pixelstube\cloud\group\CloudGroupManager$2.class
 eu\pixelstube\cloud\setups\WrapperSetup$1.class
 eu\pixelstube\cloud\group\CloudGroupManager.class
 eu\pixelstube\cloud\backend\file\FileEditor.class

@@ -29,7 +29,7 @@ public class TemplateManager implements ITemplateManager{
                     String name = resultSet.getString("name");
                     String type = resultSet.getString("type");
 
-                    templates.add(new ITemplate() {
+                    ITemplate template = new ITemplate() {
                         @Override
                         public UUID getUUID() {
                             return uuid;
@@ -45,7 +45,11 @@ public class TemplateManager implements ITemplateManager{
                             return Arrays.stream(TemplateType.values()).filter(templateType -> templateType.name().equalsIgnoreCase(type)).findAny().orElse(null);
                         }
 
-                    });
+                    };
+
+                    if (!templates.contains(template)) {
+                        templates.add(template);
+                    }
 
                 }
             } catch (SQLException e) {

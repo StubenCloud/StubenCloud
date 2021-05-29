@@ -32,6 +32,8 @@ public class TemplateSetup extends ISetup {
                 assert templateType != null;
                 CloudLauncher.getInstance().getDatabaseAdapter().executeUpdate("INSERT INTO cloud_templates (name, uniqueId, type) VALUES ('" + name + "', '" + uuid + "', '" + templateType.name() + "')");
 
+                CloudLauncher.getInstance().getTemplateManager().fetchTemplates();
+
             }
         });
 

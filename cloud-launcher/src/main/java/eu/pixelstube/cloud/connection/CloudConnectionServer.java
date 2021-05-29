@@ -54,15 +54,6 @@ public class CloudConnectionServer {
 
                         ICloudService cloudService = CloudLauncher.getInstance().getCloudServiceManager().getCachedCloudService(jsonObject.getString("serviceName"));
 
-                        cloudService.update();
-
-                        JsonLib serviceLib = JsonLib.empty();
-
-                        serviceLib.append("type", "service_registered");
-                        serviceLib.append("serviceName", cloudService.getServiceIdName());
-
-                        connection.sendTCP(serviceLib.getAsJsonString());
-
                         cloudService.setStatus(CloudServiceStatus.STARTED);
 
                         for(ICloudGroup cloudGroup : CloudLauncher.getInstance().getCloudGroupManager().getCloudGroups()){
@@ -86,7 +77,19 @@ public class CloudConnectionServer {
                         }
 
                         for (ICloudService service : CloudLauncher.getInstance().getCloudServiceManager().getCloudServices()) {
-                            service.update();
+                            JsonLib jsonLib = JsonLib.empty();
+
+                            jsonLib.append("type", "service_registered");
+                            jsonLib.append("groupName", service.getGroupName());
+                            jsonLib.append("serviceId", service.getServiceId());
+                            jsonLib.append("uuid", service.getUniqueId().toString());
+                            jsonLib.append("name", service.getName());
+                            jsonLib.append("port", service.getPort());
+                            jsonLib.append("cloudStatus", service.getServiceStatus().name());
+                            jsonLib.append("static", service.isStatic());
+                            jsonLib.append("groupVersion", service.getVersion().getDisplay());
+
+                            connection.sendTCP(jsonLib.getAsJsonString());
                         }
 
                     } else if (jsonObject.getString("type").equalsIgnoreCase("player_connected")) {
