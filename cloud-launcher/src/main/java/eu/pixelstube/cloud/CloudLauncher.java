@@ -3,6 +3,7 @@ package eu.pixelstube.cloud;
 import eu.pixelstube.cloud.backend.external.handler.EventBus;
 import eu.pixelstube.cloud.backend.file.FileManager;
 import eu.pixelstube.cloud.backend.module.ModuleHandler;
+import eu.pixelstube.cloud.backend.module.reader.JsonReader;
 import eu.pixelstube.cloud.backend.wrapper.WrapperManager;
 import eu.pixelstube.cloud.commands.*;
 import eu.pixelstube.cloud.connection.CloudConnectionServer;
@@ -21,6 +22,10 @@ import eu.pixelstube.cloud.template.TemplateManager;
 import eu.pixelstube.cloud.wrapper.IWrapperManager;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -90,7 +95,16 @@ public class CloudLauncher {
 
         commandManager = new CommandManager();
 
-        databaseAdapter = new DatabaseAdapter(new DatabaseObject("176.118.193.150", "3306", "module_stubencloud", "admin", "BUJRFzkXps7dNVfnGgrDdttdgpt84RMS")).connect();
+        JsonReader jsonReader = null;
+        try {
+            jsonReader = new JsonReader(new String(Files.readAllBytes(Paths.get(new File("storage", "database.json").toURI())), StandardCharsets.UTF_8));
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+
+        assert jsonReader != null;
+
+        databaseAdapter = new DatabaseAdapter(new DatabaseObject((String) jsonReader.read("host"), (String) jsonReader.read("port"), (String) jsonReader.read("database"), (String) jsonReader.read("username"), (String) jsonReader.read("password"))).connect();
 
         databaseAdapter.createTable("cloud_players", new String[]{"name", "uniqueId", "info"}, new DatabaseType[]{DatabaseType.VARCHAR, DatabaseType.VARCHAR, DatabaseType.LONGBLOB});
         databaseAdapter.createTable("cloud_groups",

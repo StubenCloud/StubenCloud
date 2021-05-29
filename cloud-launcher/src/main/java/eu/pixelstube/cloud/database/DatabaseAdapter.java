@@ -3,6 +3,7 @@ package eu.pixelstube.cloud.database;
 import eu.pixelstube.cloud.CloudLauncher;
 import eu.pixelstube.cloud.database.object.DatabaseObject;
 import eu.pixelstube.cloud.database.type.DatabaseType;
+import eu.pixelstube.cloud.setups.SqlSetup;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -26,12 +27,33 @@ public class DatabaseAdapter {
     public DatabaseAdapter connect(){
 
         CloudLauncher.getInstance().getCloudLogger().info("Trying to connect to mysql...");
+
+        if(CloudLauncher.getInstance().getFileManager().fileExist("storage", "database.json")){
+            try {
+                connection = DriverManager.getConnection("jdbc:mysql://" + databaseObject.getHost() + ":" + databaseObject.getPort() + "/" + databaseObject.getDatabase(), databaseObject.getUsername(), databaseObject.getPassword());
+                CloudLauncher.getInstance().getCloudLogger().success("Successfully connected to mysql.");
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        } else {
+            new SqlSetup(this);
+        }
+
+
+        return this;
+    }
+
+    public DatabaseAdapter connect(DatabaseObject databaseObject){
+
+        CloudLauncher.getInstance().getCloudLogger().info("Trying to connect to mysql...");
+
         try {
             connection = DriverManager.getConnection("jdbc:mysql://" + databaseObject.getHost() + ":" + databaseObject.getPort() + "/" + databaseObject.getDatabase(), databaseObject.getUsername(), databaseObject.getPassword());
             CloudLauncher.getInstance().getCloudLogger().success("Successfully connected to mysql.");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+
         return this;
     }
 
