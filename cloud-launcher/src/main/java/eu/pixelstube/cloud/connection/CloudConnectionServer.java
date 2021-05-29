@@ -52,9 +52,16 @@ public class CloudConnectionServer {
 
                         CloudLauncher.getInstance().getCloudLogger().info("Cloud service " + jsonObject.getString("serviceName") + " logged in!");
 
-
-
                         ICloudService cloudService = CloudLauncher.getInstance().getCloudServiceManager().getCachedCloudService(jsonObject.getString("serviceName"));
+
+                        cloudService.update();
+
+                        JsonLib serviceLib = JsonLib.empty();
+
+                        serviceLib.append("type", "service_registered");
+                        serviceLib.append("serviceName", cloudService.getServiceIdName());
+
+                        connection.sendTCP(serviceLib.getAsJsonString());
 
                         cloudService.setStatus(CloudServiceStatus.STARTED);
 

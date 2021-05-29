@@ -3,13 +3,12 @@ package eu.pixelstube.cloud.connection;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import com.velocitypowered.api.proxy.server.ServerInfo;
 import eu.pixelstube.cloud.CloudAPI;
 import eu.pixelstube.cloud.CloudPlugin;
 import eu.pixelstube.cloud.bootstrap.bungeecord.BungeeBootstrap;
 import eu.pixelstube.cloud.bootstrap.bungeecord.events.BungeeCloudServiceStartEvent;
 import eu.pixelstube.cloud.bootstrap.bungeecord.events.BungeeCloudServiceStopEvent;
-import eu.pixelstube.cloud.bootstrap.velocity.VelocityBootstrap;
+import eu.pixelstube.cloud.bootstrap.bungeecord.events.BungeeCloudServiceUpdateEvent;
 import eu.pixelstube.cloud.group.ICloudGroup;
 import eu.pixelstube.cloud.jsonlib.JsonLib;
 import eu.pixelstube.cloud.player.ICloudPlayer;
@@ -166,15 +165,28 @@ public class CloudConnection {
                         CloudAPI.getInstance().getCloudServiceManager().getCloudServices().remove(CloudAPI.getInstance().getCloudServiceManager().getCloudServices().stream().filter(cloudService1 -> cloudService1.getName().equalsIgnoreCase(name)).findAny().orElse(null));
                         CloudAPI.getInstance().getCloudServiceManager().getCloudServices().add(cloudService);
 
+                        System.out.println(cloudService.getCloudGroup().getGroupType().name());
+                        System.out.println(cloudService.getCloudGroup().getGroupVersion().name());
+
+                        if (CloudPlugin.getInstance().thisService().getVersion().equals(GroupVersion.WATERFALL) || CloudPlugin.getInstance().thisService().getVersion().equals(GroupVersion.BUNGEECORD)) {
+
+                            BungeeBootstrap.getInstance().getProxy().getPluginManager().callEvent(new BungeeCloudServiceUpdateEvent(cloudService));
+
+                        }
+
+                    } else if (jsonObject.getString("type").equalsIgnoreCase("service_registered")) {
+
+                        ICloudService cloudService = CloudAPI.getInstance().getCloudServiceManager().getCachedCloudService(jsonObject.getString("serviceName"));
+
+                        System.out.println(cloudService.getCloudGroup().getGroupType().name());
+                        System.out.println(cloudService.getCloudGroup().getGroupVersion().name());
+
                         if (cloudService.getCloudGroup().getGroupType().equals(GroupType.SERVER) || cloudService.getCloudGroup().getGroupType().equals(GroupType.LOBBY)) {
                             if (CloudPlugin.getInstance().thisService().getVersion().equals(GroupVersion.WATERFALL) || CloudPlugin.getInstance().thisService().getVersion().equals(GroupVersion.BUNGEECORD)) {
 
+                                BungeeBootstrap.getInstance().registerService(cloudService.getServiceIdName(), new InetSocketAddress("127.0.0.1", cloudService.getPort()));
+
                                 BungeeBootstrap.getInstance().getProxy().getPluginManager().callEvent(new BungeeCloudServiceStartEvent(cloudService));
-
-                                BungeeBootstrap.getInstance().registerService(serviceIdName, new InetSocketAddress("127.0.0.1", port));
-                            } else if(CloudPlugin.getInstance().thisService().getVersion().equals(GroupVersion.VELOCITY)){
-
-                                VelocityBootstrap.getInstance().getServer().registerServer(new ServerInfo(serviceIdName, new InetSocketAddress("127.0.0.1", port)));
 
                             }
 
@@ -254,9 +266,12 @@ public class CloudConnection {
                             CloudAPI.getInstance().getCloudGroupManager().getCloudGroups().add(cloudGroup);
                         }
 
-                    } else if(jsonObject.getString("type").equalsIgnoreCase("service_unregistered")){
+                    } else if (jsonObject.getString("type").equalsIgnoreCase("service_unregistered")) {
 
                         ICloudService cloudService = CloudAPI.getInstance().getCloudServiceManager().getCachedCloudService(jsonObject.getString("serviceName"));
+
+                        System.out.println(cloudService.getCloudGroup().getGroupType().name());
+                        System.out.println(cloudService.getCloudGroup().getGroupVersion().name());
 
                         BungeeBootstrap.getInstance().getProxy().getPluginManager().callEvent(new BungeeCloudServiceStopEvent(cloudService));
 

@@ -1,6 +1,8 @@
 package eu.pixelstube.cloud.bootstrap.spigot;
 
 import eu.pixelstube.cloud.CloudPlugin;
+import org.bukkit.Bukkit;
+import org.bukkit.event.Event;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -18,6 +20,10 @@ public class SpigotBootstrap extends JavaPlugin {
 
         new CloudPlugin();
 
+    }
+
+    public void callEvent(Event event){
+        Bukkit.getPluginManager().callEvent(event);
     }
 
     public static SpigotBootstrap getInstance() {
