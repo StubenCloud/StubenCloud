@@ -1,7 +1,6 @@
 # StubenCloud
 
-##Features
-****
+## Features
 
 - Module-System
 - Template System
