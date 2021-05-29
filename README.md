@@ -9,20 +9,18 @@
 - Support for Spigot, BungeeCord and Velocity
 - MySQL support
 
-##TODO
-****
+## TODO
 
 - ~~Multi-Root~~
 - ~~Dashboard~~
 
-##Installation
-****
+## Installation
 ```bash
 wget https://download.pixelstube.eu/cloud/1.0.0.zip
 ```
 
 ## Module
-****
+
 ```java
 @Module(name = "test-module", authors = "Haizoooon", reloadable = true)
 public class ProxyModule implements ICloudModule {
