@@ -7,6 +7,8 @@ import com.velocitypowered.api.proxy.server.ServerInfo;
 import eu.pixelstube.cloud.CloudAPI;
 import eu.pixelstube.cloud.CloudPlugin;
 import eu.pixelstube.cloud.bootstrap.bungeecord.BungeeBootstrap;
+import eu.pixelstube.cloud.bootstrap.bungeecord.events.BungeeCloudServiceStartEvent;
+import eu.pixelstube.cloud.bootstrap.bungeecord.events.BungeeCloudServiceStopEvent;
 import eu.pixelstube.cloud.bootstrap.velocity.VelocityBootstrap;
 import eu.pixelstube.cloud.group.ICloudGroup;
 import eu.pixelstube.cloud.jsonlib.JsonLib;
@@ -167,6 +169,8 @@ public class CloudConnection {
                         if (cloudService.getCloudGroup().getGroupType().equals(GroupType.SERVER) || cloudService.getCloudGroup().getGroupType().equals(GroupType.LOBBY)) {
                             if (CloudPlugin.getInstance().thisService().getVersion().equals(GroupVersion.WATERFALL) || CloudPlugin.getInstance().thisService().getVersion().equals(GroupVersion.BUNGEECORD)) {
 
+                                BungeeBootstrap.getInstance().getProxy().getPluginManager().callEvent(new BungeeCloudServiceStartEvent(cloudService));
+
                                 BungeeBootstrap.getInstance().registerService(serviceIdName, new InetSocketAddress("127.0.0.1", port));
                             } else if(CloudPlugin.getInstance().thisService().getVersion().equals(GroupVersion.VELOCITY)){
 
@@ -252,7 +256,9 @@ public class CloudConnection {
 
                     } else if(jsonObject.getString("type").equalsIgnoreCase("service_unregistered")){
 
+                        ICloudService cloudService = CloudAPI.getInstance().getCloudServiceManager().getCachedCloudService(jsonObject.getString("serviceName"));
 
+                        BungeeBootstrap.getInstance().getProxy().getPluginManager().callEvent(new BungeeCloudServiceStopEvent(cloudService));
 
                     }
 
