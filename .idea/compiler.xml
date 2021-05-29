@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="cloud-notify" />
         <module name="cloud-api" />
         <module name="cloud-launcher" />
         <module name="cloud-proxy-module" />

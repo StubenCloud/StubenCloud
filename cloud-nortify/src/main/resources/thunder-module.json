@@ -1,0 +1,4 @@
+{
+  "name": "notify-module",
+  "main": "eu.pixelstube.notify.bootstrap.bungee.BungeeModule"
+}

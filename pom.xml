@@ -16,6 +16,7 @@
         <module>cloud-plugin</module>
         <module>cloud-proxy-module</module>
         <module>cloud-hub-module</module>
+        <module>cloud-nortify</module>
     </modules>
 
     <properties>

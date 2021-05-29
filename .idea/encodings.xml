@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
-    <file url="file://$PROJECT_DIR$/cloud-api/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/cloud-hub-module/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/cloud-jsonlib/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/cloud-launcher/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cloud-nortify/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/cloud-plugin/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/cloud-proxy-module/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/cloud-runner/src/main/resources" charset="UTF-8" />
   </component>
 </project>

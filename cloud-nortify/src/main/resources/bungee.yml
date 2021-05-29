@@ -1,0 +1,7 @@
+name: Cloud-Nortify
+main: eu.pixelstube.notify.bootstrap.bungee.BungeeModule
+version: 1.0.0
+authors:
+  - StubenCloud
+  - Clemens R.
+  - Max H.
