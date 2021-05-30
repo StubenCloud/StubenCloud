@@ -1,9 +1,9 @@
 package eu.pixelstube.notify.bootstrap.bungee;
 
 /*
-//This File was created by ZxroGame
-//Copyright© 2021 Clemens R.
-//Date: 29.05.2021
+    » This File was created by ZxroGame
+    » Copyright© 2021 Clemens R.
+    » Date: 29.05.2021
  */
 
 import eu.pixelstube.cloud.CloudPlugin;
@@ -19,7 +19,6 @@ public class BungeeModule extends Plugin {
     public void onEnable() {
 
         instance = this;
-
         CloudPlugin.getInstance().getConnection().getClient().addListener(new ConnectionNode());
 
     }
