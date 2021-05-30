@@ -1,6 +1,7 @@
 package eu.pixelstube.cloud;
 
 import eu.pixelstube.cloud.connection.CloudConnection;
+import eu.pixelstube.cloud.event.handler.EventBus;
 import eu.pixelstube.cloud.jsonlib.JsonLib;
 import eu.pixelstube.cloud.service.ICloudService;
 import org.json.JSONObject;
@@ -22,12 +23,16 @@ public class CloudPlugin {
     private final CloudConnection connection;
     private String serviceName;
 
+    private final EventBus eventBus;
+
     public CloudPlugin() {
         instance = this;
 
         new CloudAPI();
 
         connection = new CloudConnection();
+
+        eventBus = new EventBus();
 
         try {
             String content = new String(Files.readAllBytes(Paths.get(new File("cloud.json").toURI())), StandardCharsets.UTF_8);
@@ -46,6 +51,10 @@ public class CloudPlugin {
 
     public ICloudService thisService(){
         return CloudAPI.getInstance().getCloudServiceManager().getCachedCloudService(serviceName);
+    }
+
+    public EventBus getEventBus() {
+        return eventBus;
     }
 
     public static CloudPlugin getInstance() {

@@ -1,1 +1,10 @@
-{"id":"cloudplugin","name":"CloudPlugin","version":"1.0.0","authors":["Haizoooon"],"dependencies":[],"main":"eu.pixelstube.cloud.bootstrap.velocity.VelocityBootstrap"}
+{
+  "id": "cloudplugin",
+  "name": "CloudPlugin",
+  "version": "1.0.0",
+  "authors": [
+    "Haizoooon"
+  ],
+  "dependencies": [],
+  "main": "eu.pixelstube.cloud.bootstrap.velocity.VelocityBootstrap"
+}

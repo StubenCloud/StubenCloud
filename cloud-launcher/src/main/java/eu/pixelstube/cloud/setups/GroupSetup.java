@@ -33,7 +33,7 @@ public class GroupSetup extends ISetup {
                         Integer.parseInt(minServices),
                         Integer.parseInt(maxMemory),
                         Integer.parseInt(percentage),
-                        Arrays.stream(GroupVersion.values()).filter(groupVersion -> groupVersion.getDisplay().equalsIgnoreCase(groupVersionName)).findAny().orElse(null),
+                        Objects.requireNonNull(Arrays.stream(GroupVersion.values()).filter(groupVersion -> groupVersion.getDisplay().equalsIgnoreCase(groupVersionName)).findAny().orElse(null)),
                         Objects.requireNonNull(Arrays.stream(GroupType.values()).filter(groupType -> groupType.getName().equalsIgnoreCase(groupTypeName)).findAny().orElse(null)),
                         template,
                         "true");
@@ -105,7 +105,7 @@ public class GroupSetup extends ISetup {
             @Override
             public boolean handle(String input) {
                 groupTypeName = input;
-                return getSuggestions().contains(input);
+                return getSuggestions().stream().anyMatch(s -> s.equalsIgnoreCase(input));
             }
         }, new SetupInput("Please provide the group version") {
             @Override
@@ -122,7 +122,7 @@ public class GroupSetup extends ISetup {
             @Override
             public boolean handle(String input) {
                 groupVersionName = input;
-                return getSuggestions().contains(input);
+                return getSuggestions().stream().anyMatch(s -> s.equalsIgnoreCase(input));
             }
         }, new SetupInput("Please provide the template name") {
             @Override
@@ -137,7 +137,7 @@ public class GroupSetup extends ISetup {
             @Override
             public boolean handle(String input) {
                 template = input;
-                return getSuggestions().contains(input);
+                return getSuggestions().stream().anyMatch(s -> s.equalsIgnoreCase(input));
             }
         });
 

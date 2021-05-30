@@ -120,6 +120,68 @@ public class CloudGroupManager implements ICloudGroupManager {
                 "INSERT INTO cloud_groups (name, maxServices, minServices, maxMemory, percentage, groupVersion, groupType, maintenance, template) VALUES " +
                         "('" + name + "', '" + maxServices + "', '" + minServices + "', '" +  maxMemory+ "', '" + percentage + "', '" +groupVersion.getDisplay() + "', '" + groupType.getName() + "', '" + maintenance + "', '" + template + "')"
         );
+
+        ICloudGroup cloudGroup = new ICloudGroup() {
+            @Override
+            public UUID getUUID() {
+                return UUID.randomUUID();
+            }
+
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public int getMaxServices() {
+                return maxServices;
+            }
+
+            @Override
+            public int getMinServices() {
+                return minServices;
+            }
+
+            @Override
+            public int getMaxMemory() {
+                return maxMemory;
+            }
+
+            @Override
+            public int getPercentageToStartNewService() {
+                return percentage;
+            }
+
+            @Override
+            public GroupVersion getGroupVersion() {
+                return groupVersion;
+            }
+
+            @Override
+            public GroupType getGroupType() {
+                return groupType;
+            }
+
+            @Override
+            public boolean isMaintenance() {
+                return Boolean.parseBoolean(maintenance);
+            }
+
+            @Override
+            public int getMaxPlayers() {
+                return 50;
+            }
+
+            @Override
+            public ITemplate getTemplate() {
+                return CloudLauncher.getInstance().getTemplateManager().getCachedTemplate(template);
+            }
+        };
+
+        CloudLauncher.getInstance().getCloudGroupManager().getCloudGroups().add(cloudGroup);
+
+        CloudLauncher.getInstance().getCloudServiceManager().createService(cloudGroup);
+
     }
 
     public List<ICloudGroup> getCloudGroups() {

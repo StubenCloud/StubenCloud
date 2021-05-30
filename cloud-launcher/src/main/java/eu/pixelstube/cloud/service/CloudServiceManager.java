@@ -32,128 +32,141 @@ public class CloudServiceManager implements ICloudServiceManager {
         this.cloudServices = new ArrayList<>();
     }
 
+    public void createService(ICloudGroup cloudGroup){
+        for(int i = 0; i < cloudGroup.getMinServices(); i++){
+            int finalI = i + 1;
+            CloudLauncher.getInstance().getCloudLogger().info("Told MainWrapper to start service " + cloudGroup.getName() + "-" + finalI);
+            int port = randomPort();
+            ICloudService cloudService = new ICloudService() {
+
+                private CloudServiceStatus cloudServiceStatus = CloudServiceStatus.PREPARING;
+                private final CopyOnWriteArrayList<String> copyOnWriteArrayList = new CopyOnWriteArrayList<>();
+                private final CloudServiceExecutor cloudServiceExecutor = new CloudServiceExecutor(this);
+                private final UUID uuid = UUID.randomUUID();
+
+                @Override
+                public String getGroupName() {
+                    return cloudGroup.getName();
+                }
+
+                @Override
+                public int getServiceId() {
+                    return finalI;
+                }
+
+                @Override
+                public UUID getUniqueId() {
+                    return uuid;
+                }
+
+                @Override
+                public String getName() {
+                    return cloudGroup.getName();
+                }
+
+                @Override
+                public List<ICloudPlayer> getCurrentPlayers() {
+                    return new ArrayList<>();
+                }
+
+                @Override
+                public ICloudGroup getCloudGroup() {
+                    return cloudGroup;
+                }
+
+                @Override
+                public CloudServiceStatus getServiceStatus() {
+                    return cloudServiceStatus;
+                }
+
+                @Override
+                public ICloudServiceExecutor getServiceExecutor() {
+                    return cloudServiceExecutor;
+                }
+
+                @Override
+                public CopyOnWriteArrayList<String> getConsoleMessages() {
+                    return copyOnWriteArrayList;
+                }
+
+                @Override
+                public GroupVersion getVersion() {
+                    return cloudGroup.getGroupVersion();
+                }
+
+                @Override
+                public void setStatus(CloudServiceStatus cloudServiceStatus) {
+                    this.cloudServiceStatus = cloudServiceStatus;
+                }
+
+                @Override
+                public String getServiceIdName() {
+                    return getName() + "-" + getServiceId();
+                }
+
+                @Override
+                public int getPort() {
+                    return port;
+                }
+
+                @Override
+                public boolean isStatic() {
+                    return false;
+                }
+
+                @Override
+                public void start() {
+                    CloudLauncher.getInstance().getFileManager().deleteFiles(new File("temp/" + getServiceIdName()));
+
+                    if(!CloudLauncher.getInstance().getFileManager().fileExist("storage/jars", getVersion().getDisplay() + ".jar")){
+                        new UrlDownloader(getVersion().getLink(), new File("storage/jars", getVersion().getDisplay() + ".jar"), DownloadType.MINECRAFT_JAR).download();
+                    }
+
+                    CloudLauncher.getInstance().getFileManager().createFolder("temp/" + getServiceIdName());
+                    CloudLauncher.getInstance().getFileManager().copyFile("storage/jars/" + getVersion().getDisplay() + ".jar", "temp/" + getServiceIdName() + "/" + getVersion().getDisplay() + ".jar");
+
+
+                }
+
+                @Override
+                public void update() {
+
+                    JsonLib jsonLib = JsonLib.empty();
+
+                    jsonLib.append("type", "service_update");
+                    jsonLib.append("groupName", getGroupName());
+                    jsonLib.append("serviceId", getServiceId());
+                    jsonLib.append("uuid", getUniqueId().toString());
+                    jsonLib.append("name", getName());
+                    jsonLib.append("port", getPort());
+                    jsonLib.append("cloudStatus", getServiceStatus().name());
+                    jsonLib.append("static", isStatic());
+                    jsonLib.append("groupVersion", getVersion().getDisplay());
+
+                    CloudLauncher.getInstance().getCloudConnectionServer().getServer().sendToAllTCP(jsonLib.getAsJsonString());
+
+                }
+            };
+
+            cloudServices.add(cloudService);
+
+            cloudService.start();
+
+            CloudServiceExecutor cloudServiceExecutor = new CloudServiceExecutor(cloudService);
+            new Thread(cloudServiceExecutor::start).start();
+
+            try {
+                Thread.sleep(2 * 1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
     public void fetchServices(){
 
-        CloudLauncher.getInstance().getCloudGroupManager().getCloudGroups().forEach(iCloudGroup -> {
-            for(int i = 0; i < iCloudGroup.getMinServices(); i++){
-                int finalI = i + 1;
-                CloudLauncher.getInstance().getCloudLogger().info("Told MainWrapper to start service " + iCloudGroup.getName() + "-" + finalI);
-                int port = randomPort();
-                ICloudService cloudService = new ICloudService() {
-
-                    private CloudServiceStatus cloudServiceStatus = CloudServiceStatus.PREPARING;
-                    private final CopyOnWriteArrayList<String> copyOnWriteArrayList = new CopyOnWriteArrayList<>();
-                    private final CloudServiceExecutor cloudServiceExecutor = new CloudServiceExecutor(this);
-                    private final UUID uuid = UUID.randomUUID();
-
-                    @Override
-                    public String getGroupName() {
-                        return iCloudGroup.getName();
-                    }
-
-                    @Override
-                    public int getServiceId() {
-                        return finalI;
-                    }
-
-                    @Override
-                    public UUID getUniqueId() {
-                        return uuid;
-                    }
-
-                    @Override
-                    public String getName() {
-                        return iCloudGroup.getName();
-                    }
-
-                    @Override
-                    public List<ICloudPlayer> getCurrentPlayers() {
-                        return new ArrayList<>();
-                    }
-
-                    @Override
-                    public ICloudGroup getCloudGroup() {
-                        return iCloudGroup;
-                    }
-
-                    @Override
-                    public CloudServiceStatus getServiceStatus() {
-                        return cloudServiceStatus;
-                    }
-
-                    @Override
-                    public ICloudServiceExecutor getServiceExecutor() {
-                        return cloudServiceExecutor;
-                    }
-
-                    @Override
-                    public CopyOnWriteArrayList<String> getConsoleMessages() {
-                        return copyOnWriteArrayList;
-                    }
-
-                    @Override
-                    public GroupVersion getVersion() {
-                        return iCloudGroup.getGroupVersion();
-                    }
-
-                    @Override
-                    public void setStatus(CloudServiceStatus cloudServiceStatus) {
-                        this.cloudServiceStatus = cloudServiceStatus;
-                    }
-
-                    @Override
-                    public String getServiceIdName() {
-                        return getName() + "-" + getServiceId();
-                    }
-
-                    @Override
-                    public int getPort() {
-                        return port;
-                    }
-
-                    @Override
-                    public boolean isStatic() {
-                        return false;
-                    }
-
-                    @Override
-                    public void start() {
-                        CloudLauncher.getInstance().getFileManager().deleteFiles(new File("temp/" + getServiceIdName()));
-
-                        if(!CloudLauncher.getInstance().getFileManager().fileExist("storage/jars", getVersion().getDisplay() + ".jar")){
-                            new UrlDownloader(getVersion().getLink(), new File("storage/jars", getVersion().getDisplay() + ".jar"), DownloadType.MINECRAFT_JAR).download();
-                        }
-
-                        CloudLauncher.getInstance().getFileManager().createFolder("temp/" + getServiceIdName());
-                        CloudLauncher.getInstance().getFileManager().copyFile("storage/jars/" + getVersion().getDisplay() + ".jar", "temp/" + getServiceIdName() + "/" + getVersion().getDisplay() + ".jar");
-
-
-                    }
-
-                    @Override
-                    public void update() {
-
-                        JsonLib jsonLib = JsonLib.empty();
-
-                        jsonLib.append("type", "service_update");
-                        jsonLib.append("groupName", getGroupName());
-                        jsonLib.append("serviceId", getServiceId());
-                        jsonLib.append("uuid", getUniqueId().toString());
-                        jsonLib.append("name", getName());
-                        jsonLib.append("port", getPort());
-                        jsonLib.append("cloudStatus", getServiceStatus().name());
-                        jsonLib.append("static", isStatic());
-                        jsonLib.append("groupVersion", getVersion().getDisplay());
-
-                        CloudLauncher.getInstance().getCloudConnectionServer().getServer().sendToAllTCP(jsonLib.getAsJsonString());
-
-                    }
-                };
-
-                cloudServices.add(cloudService);
-
-            }
-        });
+        CloudLauncher.getInstance().getCloudGroupManager().getCloudGroups().forEach(this::createService);
 
         cloudServices.forEach(cloudService -> {
             cloudService.start();
