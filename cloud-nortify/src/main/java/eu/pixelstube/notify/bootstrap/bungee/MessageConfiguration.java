@@ -1,5 +1,11 @@
 package eu.pixelstube.notify.bootstrap.bungee;
 
+/*
+    » This File was created by ZxroGame
+    » Copyright© 2021 Clemens R.
+    » Date: 29.05.2021
+ */
+
 public class MessageConfiguration {
 
     private final String prefix, serviceStarted, serviceStopped;
@@ -8,6 +14,7 @@ public class MessageConfiguration {
         this.prefix = prefix;
         this.serviceStarted = serviceStarted;
         this.serviceStopped = serviceStopped;
+
     }
 
     public String getPrefix() {

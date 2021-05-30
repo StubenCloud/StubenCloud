@@ -15,6 +15,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+/*
+    » This File was created by ZxroGame
+    » Copyright© 2021 Clemens R.
+    » Date: 29.05.2021
+ */
+
 public class ConnectionNode extends Listener {
 
     @Override
